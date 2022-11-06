@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+    <%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +20,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- JQuery -->
-<script src="/js/jquery.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <!--Bootstrap 5.2.2  -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
@@ -33,7 +34,7 @@
 				<div class="w3-card mx-5 mt-5">
 					<div><img class="brand" alt="Bandhan_icon" src="images/Bandhan_Text_Logo.png"></div>
 				</div>
-				<form class="login">
+				<form class="login" action="loginSuccess">
 				
 				<div class="login__field">
 					<i class="login__icon fas fa-user"></i>
@@ -45,11 +46,12 @@
 				</div>
 
 					<div class="captcha">
-						<img alt="capthca" src="data:image/png;base64,${captcha.image}">
-						<i class="fa fa-refresh class="mt-2" style="font-size: 24px; color: white" id="refresh"></i>
+						<img alt="capthca" src="data:image/png;base64,${captcha.image}" id="captchaImage">
+						<i type="button" class="fa fa-refresh mx-2" style="font-size: 24px; color: white" id="refresh"></i>
 					</div>
-					
+					<!-- hidden="" -->
 					<div class="captcha-txt">
+						<input  id="hiddenCaptcha" value="${captcha.hiddenCaptcha}">
 						<input type="text" class="mx-2 captcha-text" style="border-radius: 20px" name="captcha">
 					</div>
 
@@ -70,9 +72,19 @@
 
 <script type="text/javascript">
 
-	$(#refresh).click(function(){
-		alert("refresh clicked");
-	})
+	$("#refresh").click(function(){
+		$.ajax({
+			type: "GET",
+			url: "/captcha",
+			success: function(data){
+				console.log(data);
+				var src="data:image/png;base64,"+data.captchaImage;
+				console.log(src);
+				$("#captchaImage").attr("src",src);
+				$("#hiddenCaptcha").val(data.captchaHidden);
+			}
+		})
+	});
 
 </script>
 </body>
